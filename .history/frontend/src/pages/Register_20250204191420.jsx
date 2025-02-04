@@ -9,7 +9,6 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [theme, setTheme] = useState('light');
-    const [error, setError] = useState(null); // To handle errors
     const navigate = useNavigate();
 
     const toggleTheme = () => {
@@ -21,14 +20,11 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Call the registration function from your authService
-            const response = await authService.register({ firstName, lastName, email, password });
-            if (response.status === 201) {
-                navigate('/login'); // Redirect to login on successful registration
-            }
+            await authService.register({ firstName, lastName, email, password });
+            navigate('/dashboard');
         } catch (error) {
             console.error('Registration error', error);
-            setError('Registration failed. Please try again.');
+            alert('Registration failed');
         }
     };
 
@@ -58,9 +54,6 @@ const Register = () => {
                         Join us and start managing your expenses
                     </p>
                 </div>
-
-                {/* Error Handling */}
-                {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
                 {/* Register Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
