@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import helmet from "helmet"; // Added for security
 
 // Import Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -17,13 +18,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware for Security
+app.use(helmet()); // Added Helmet for basic security headers
+
+// CORS Middleware - Allowing credentials and specific origin
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: "http://localhost:3000",  // Replace with your deployed frontend if needed
+    methods: ["GET", "POST", "PUT", "DELETE"],  // Allowing these methods
+    allowedHeaders: ["Content-Type", "Authorization"],  // Allowing specific headers
+    credentials: true,  // Allowing credentials (cookies or auth tokens)
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
