@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import helmet from "helmet"; // Added for security
 
 // Import Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -18,16 +17,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware for Security
-app.use(helmet()); // Added Helmet for basic security headers
+// Allowed Origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://expense-tracker-assignment-ccya.vercel.app",
+];
 
-// CORS Middleware - Allowing credentials and specific origin
+// Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",  // Replace with your deployed frontend if needed
-    methods: ["GET", "POST", "PUT", "DELETE"],  // Allowing these methods
-    allowedHeaders: ["Content-Type", "Authorization"],  // Allowing specific headers
-    credentials: true,  // Allowing credentials (cookies or auth tokens)
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error("Blocked by CORS: ", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
 
